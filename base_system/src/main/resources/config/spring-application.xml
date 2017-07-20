@@ -14,12 +14,9 @@
     http://www.springframework.org/schema/aop 
      http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
-<!-- 	<context:component-scan base-package="com.snc.atm.server.*,com.snc.atm.agent.service,com.snc.mapper.base,com.snc.atm.server.mapper" />-->
-<!--	<bean id="initController" class="com.snc.atm.server.controller.index.InitController"
-		init-method="init" />
-    <bean id="springContextUtil" class="com.snc.atm.server.util.SpringContextUtil" lazy-init="false"></bean>
-    <bean id="initAgentProcesser" class="com.snc.atm.agent.init.InitAgentProcesser"
-		init-method="init" scope="singleton"/>-->
+	<!-- 自动扫描包 ,将带有注解的类 纳入spring容器管理 -->
+	<context:component-scan base-package="com.smpl.*"/>
+
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -35,42 +32,9 @@
 		<property name="driverClassName" value="${atm.driver}" />
 		<property name="username" value="${atm.username}" />
 		<property name="password" value="${atm.password}" />
-
-		<!-- <property name="initialSize" value="5" /> 如果放开这个,会导致连接异常时,不断重复连接,直到服务器挂掉 -->
-		<property name="minIdle" value="5" />
-		<property name="maxActive" value="50" />
-		 <!-- 配置监控统计拦截的filters，去掉后监控界面sql无法统计 .. 项目不需要druid统计-->
-		<!-- <property name="filters" value="stat" /> -->
-		<property name="connectionProperties" value="druid.stat.slowSqlMillis=500;druid.stat.logSlowSql=true" />
-		<property name="maxWait" value="5000" />
-		<property name="defaultAutoCommit" value="true" />
-
-		<property name="timeBetweenEvictionRunsMillis" value="300000" />
-		<property name="minEvictableIdleTimeMillis" value="300000" />
-
-		<property name="validationQuery" value="SELECT 'x' FROM DUAL" />
-		<property name="testWhileIdle" value="true" />
-		<property name="testOnBorrow" value="false" />
-		<property name="testOnReturn" value="false" />
-
-		<property name="poolPreparedStatements" value="false" />
-		<property name="maxPoolPreparedStatementPerConnectionSize"
-			value="20" />
-
-		<property name="removeAbandoned" value="true" />
-		<property name="removeAbandonedTimeout" value="1200" />
-		<property name="logAbandoned" value="true" />
 	</bean>
 
-	<!--<bean id="pagePlugin" class="com.snc.atm.server.plugin.PagePlugin">
-		<property name="properties">
-			<props>
-				<prop key="dialect">mysql</prop>
-				<prop key="pageSqlId">.*query.*</prop>
-			</props>
-		</property>
-	</bean>
--->
+
 	<bean id="pageInterceptor" class="com.github.pagehelper.PageInterceptor">
 		<property name="properties">
 			<props>
@@ -80,56 +44,42 @@
 		</property>
 	</bean>
 
-	<!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		&lt;!&ndash; 自动匹配Mapper映射文件 &ndash;&gt;
-		<property name="mapperLocations" value="classpath*:mappings/**/*apper.xml" />
-		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
-		<property name="typeAliasesPackage" value="com.snc.atm.server.entity" />
-		<property name="plugins">
-			<list>
-				<ref bean="pagePlugin" />
-				<ref bean="pageInterceptor"/>
-			</list>
-		</property>&lt;!&ndash;&ndash;&gt;
-	</bean>-->
-	<!-- 通过扫描的模式，扫描目录在com.sys.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.snc.atm.server.mapper" />
-	</bean>
+
 	<!-- 事务配置 -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<!-- 自定义quartz调度器 如果需要定时调度功能，请打开-->
-   <!-- <bean id="quartzLauncher" class="com.snc.atm.server.quartz.QuartzLauncher" init-method="start" destroy-method="stop"></bean>-->
-   <!-- 整合activiti工作流 -->
-	<!--<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
-		<property name="dataSource" ref="dataSource" />
-         <property name="transactionManager" ref="transactionManager" />
-         <property name="databaseSchemaUpdate" value="true" />
-         <property name="jobExecutorActivate" value="false" />
 
-    </bean>
-    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
-         <property name="processEngineConfiguration" ref="processEngineConfiguration" />
-    </bean>
- 
-	<bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
-	<bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
-	<bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
-	<bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
-	<bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
-	
-	<bean id="activitiUtil" class="com.snc.atm.server.process.util.ActivitiUtil">
-		<property name="processEngine" ref="processEngine" />
-		<property name="repositoryService" ref="repositoryService" />
-		<property name="runtimeService" ref="runtimeService" />
-		<property name="taskService" ref="taskService" />
-		<property name="historyService" ref="historyService" />
-		<property name="managementService" ref="managementService" />
-	</bean>-->
+	<!-- 事务管理 通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 对insert,update,delete 开头的方法进行事务管理,只要有异常就回滚 -->
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<!-- select,count开头的方法,开启只读,提高数据库访问性能 -->
+			<tx:method name="select*" read-only="true"/>
+			<tx:method name="count*" read-only="true"/>
+			<!-- 对其他方法 使用默认的事务管理 -->
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 事务 aop 配置 -->
+<!--
+	<aop:config>
+		<aop:pointcut id="serviceMethods" expression="execution(* com.smpl.quick4j.web.service..*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+	</aop:config>
+-->
+
+	<!-- 配置使Spring采用CGLIB代理 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<!-- 启用对事务注解的支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+
 	<context:annotation-config />
 </beans>
