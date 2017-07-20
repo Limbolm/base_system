@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd   
+    http://www.springframework.org/schema/context   
+    http://www.springframework.org/schema/context/spring-context-4.1.xsd  
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+    http://www.springframework.org/schema/task 
+    http://www.springframework.org/schema/task/spring-task-4.1.xsd     
+    http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+<!-- 	<context:component-scan base-package="com.snc.atm.server.*,com.snc.atm.agent.service,com.snc.mapper.base,com.snc.atm.server.mapper" />-->
+<!--	<bean id="initController" class="com.snc.atm.server.controller.index.InitController"
+		init-method="init" />
+    <bean id="springContextUtil" class="com.snc.atm.server.util.SpringContextUtil" lazy-init="false"></bean>
+    <bean id="initAgentProcesser" class="com.snc.atm.agent.init.InitAgentProcesser"
+		init-method="init" scope="singleton"/>-->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config/jdbc.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${atm.url}" />
+		<property name="driverClassName" value="${atm.driver}" />
+		<property name="username" value="${atm.username}" />
+		<property name="password" value="${atm.password}" />
+
+		<!-- <property name="initialSize" value="5" /> 如果放开这个,会导致连接异常时,不断重复连接,直到服务器挂掉 -->
+		<property name="minIdle" value="5" />
+		<property name="maxActive" value="50" />
+		 <!-- 配置监控统计拦截的filters，去掉后监控界面sql无法统计 .. 项目不需要druid统计-->
+		<!-- <property name="filters" value="stat" /> -->
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=500;druid.stat.logSlowSql=true" />
+		<property name="maxWait" value="5000" />
+		<property name="defaultAutoCommit" value="true" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="300000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x' FROM DUAL" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<property name="poolPreparedStatements" value="false" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="1200" />
+		<property name="logAbandoned" value="true" />
+	</bean>
+
+	<!--<bean id="pagePlugin" class="com.snc.atm.server.plugin.PagePlugin">
+		<property name="properties">
+			<props>
+				<prop key="dialect">mysql</prop>
+				<prop key="pageSqlId">.*query.*</prop>
+			</props>
+		</property>
+	</bean>
+-->
+	<bean id="pageInterceptor" class="com.github.pagehelper.PageInterceptor">
+		<property name="properties">
+			<props>
+				<prop key="helperDialect">mysql</prop>
+				<prop key="sqlErgex">*ByPage</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		&lt;!&ndash; 自动匹配Mapper映射文件 &ndash;&gt;
+		<property name="mapperLocations" value="classpath*:mappings/**/*apper.xml" />
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+		<property name="typeAliasesPackage" value="com.snc.atm.server.entity" />
+		<property name="plugins">
+			<list>
+				<ref bean="pagePlugin" />
+				<ref bean="pageInterceptor"/>
+			</list>
+		</property>&lt;!&ndash;&ndash;&gt;
+	</bean>-->
+	<!-- 通过扫描的模式，扫描目录在com.sys.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.snc.atm.server.mapper" />
+	</bean>
+	<!-- 事务配置 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 自定义quartz调度器 如果需要定时调度功能，请打开-->
+   <!-- <bean id="quartzLauncher" class="com.snc.atm.server.quartz.QuartzLauncher" init-method="start" destroy-method="stop"></bean>-->
+   <!-- 整合activiti工作流 -->
+	<!--<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+		<property name="dataSource" ref="dataSource" />
+         <property name="transactionManager" ref="transactionManager" />
+         <property name="databaseSchemaUpdate" value="true" />
+         <property name="jobExecutorActivate" value="false" />
+
+    </bean>
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+         <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+    </bean>
+ 
+	<bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+	<bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+	<bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+	<bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+	<bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+	
+	<bean id="activitiUtil" class="com.snc.atm.server.process.util.ActivitiUtil">
+		<property name="processEngine" ref="processEngine" />
+		<property name="repositoryService" ref="repositoryService" />
+		<property name="runtimeService" ref="runtimeService" />
+		<property name="taskService" ref="taskService" />
+		<property name="historyService" ref="historyService" />
+		<property name="managementService" ref="managementService" />
+	</bean>-->
+	<context:annotation-config />
+</beans>
