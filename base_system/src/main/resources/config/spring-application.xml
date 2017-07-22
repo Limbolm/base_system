@@ -32,9 +32,29 @@
 		<property name="driverClassName" value="${atm.driver}" />
 		<property name="username" value="${atm.username}" />
 		<property name="password" value="${atm.password}" />
+		<property name="maxWait" value="5000" />
+		<property name="defaultAutoCommit" value="true" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="300000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x' FROM DUAL" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<property name="poolPreparedStatements" value="false" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+				  value="20" />
+
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="1200" />
+		<property name="logAbandoned" value="true" />
 	</bean>
 
 
+
+ <!--mysql分页工具-->
 	<bean id="pageInterceptor" class="com.github.pagehelper.PageInterceptor">
 		<property name="properties">
 			<props>
@@ -44,6 +64,24 @@
 		</property>
 	</bean>
 
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="dataSource" />
+	<!-- 自动匹配Mapper映射文件 -->
+	<property name="mapperLocations" value="classpath*:mapping/**/*apper.xml" />
+	<property name="configLocation" value="classpath:config/sqlMapConfig.xml" />
+	<property name="typeAliasesPackage" value="com.snc.atm.server.entity" />
+	<property name="plugins">
+		<list>
+			<!--<ref bean="pagePlugin" /> 自定义分页类 后期编写-->
+			<ref bean="pageInterceptor"/>
+		</list>
+	</property>
+	</bean>
+
+	<!-- 通过扫描的模式，扫描目录在com.sys.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.snc.atm.server.mapper" />
+	</bean>
 
 	<!-- 事务配置 -->
 	<bean id="transactionManager"
@@ -66,13 +104,13 @@
 		</tx:attributes>
 	</tx:advice>
 
+
 	<!-- 事务 aop 配置 -->
-<!--
 	<aop:config>
-		<aop:pointcut id="serviceMethods" expression="execution(* com.smpl.quick4j.web.service..*(..))"/>
+		<aop:pointcut id="serviceMethods" expression="execution(* com.smpl.*.service..*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
 	</aop:config>
--->
+
 
 	<!-- 配置使Spring采用CGLIB代理 -->
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
