@@ -67,9 +67,9 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 	<property name="dataSource" ref="dataSource" />
 	<!-- 自动匹配Mapper映射文件 -->
-	<property name="mapperLocations" value="classpath*:mapping/**/*apper.xml" />
+	<property name="mapperLocations" value="classpath*:mapping/**/*-mapper.xml" />
 	<property name="configLocation" value="classpath:config/mybatisMapConfig.xml" />
-	<property name="typeAliasesPackage" value="com.snc.atm.server.entity" />
+	<property name="typeAliasesPackage" value="com.smpl.base.entity" />
 	<property name="plugins">
 		<list>
 			<!--<ref bean="pagePlugin" /> 自定义分页类 后期编写-->
@@ -80,7 +80,7 @@
 
 	<!-- 通过扫描的模式，扫描目录在com.sys.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.snc.atm.server.mapper" />
+		<property name="basePackage" value="com.smpl.base.mapper" />
 	</bean>
 
 	<!-- 事务配置 -->
