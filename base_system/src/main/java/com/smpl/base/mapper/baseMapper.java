@@ -7,22 +7,21 @@ import java.util.Objects;
 /**
  * 公共mpper类
  */
-public interface baseMapper<T> {
+public interface baseMapper {
 
     /**
      * 根据id查询数据
-     * @param id
-     * @param clazz
+     * @param map
      * @return
      */
-    Map<String,Objects> selectById(String id,Class clazz);
+    Map<String,Objects> selectById(Map<String, Objects> map);
 
     /**
      * 根据实体类查询数据
-     * @param clazz
+     * @param map
      * @return
      */
-    List<Map<String,Objects>> selectList(Class clazz);
+    List<Map<String,Objects>> selectList(Map<String, Objects> map);
 
     /**
      * 根据属性查询数据
@@ -30,5 +29,8 @@ public interface baseMapper<T> {
      * @return
      */
     List<Map<String,Objects>> selectByAttribute(Map<String,Objects> map);
+
+
+
 
 }
