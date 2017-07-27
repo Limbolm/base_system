@@ -31,6 +31,28 @@ public interface baseMapper {
     List<Map<String,Objects>> selectByAttribute(Map<String,Objects> map);
 
 
+    /**
+     * 删除
+     * @param map
+     */
+    void delete(Map<String,Objects> map);
+
+
+    /**
+     * 更新
+     * @param map
+     * @return
+     */
+    Integer update(Map<String,Objects> map);
+
+    /**
+     * 新增
+     * @param map
+     * @return
+     */
+    Integer insert(Map<String,Objects> map);
+
+
 
 
 }
