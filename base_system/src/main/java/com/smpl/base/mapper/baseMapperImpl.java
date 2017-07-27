@@ -40,6 +40,21 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
     }
 
     @Override
+    public void delete(Map<String, Objects> map) {
+
+    }
+
+    @Override
+    public Integer update(Map<String, Objects> map) {
+        return null;
+    }
+
+    @Override
+    public Integer insert(Map<String, Objects> map) {
+        return null;
+    }
+
+    @Override
     public List<Map<String, Objects>> selectByAttribute(Map map) {
         return null;
     }
