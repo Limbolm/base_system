@@ -1,5 +1,7 @@
 package com.smpl.base.mapper;
 
+import com.smpl.base.entity.DataMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,28 +16,28 @@ public interface baseMapper {
      * @param map
      * @return
      */
-    Map<String,Objects> selectById(Map<String, Objects> map);
+    DataMap selectById(DataMap map);
 
     /**
      * 根据实体类查询数据
      * @param map
      * @return
      */
-    List<Map<String,Objects>> selectList(Map<String, Objects> map);
+    List<DataMap> selectList(DataMap map);
 
     /**
      * 根据属性查询数据
      * @param map
      * @return
      */
-    List<Map<String,Objects>> selectByAttribute(Map<String,Objects> map);
+    List<DataMap> selectByAttribute(DataMap map);
 
 
     /**
      * 删除
      * @param map
      */
-    void delete(Map<String,Objects> map);
+    void delete(DataMap map);
 
 
     /**
@@ -43,14 +45,14 @@ public interface baseMapper {
      * @param map
      * @return
      */
-    Integer update(Map<String,Objects> map);
+    Integer update(DataMap map);
 
     /**
      * 新增
      * @param map
      * @return
      */
-    Integer insert(Map<String,Objects> map);
+    Integer insert(DataMap map);
 
 
 
