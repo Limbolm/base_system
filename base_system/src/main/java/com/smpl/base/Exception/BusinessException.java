@@ -7,10 +7,9 @@ public class BusinessException extends RuntimeException {
 
     private  String msg;//异常信息
 
-    public BusinessException(String message, String msg) {
+    public BusinessException(String message) {
         super(message);
         this.msg = msg;
     }
-
 
 }
