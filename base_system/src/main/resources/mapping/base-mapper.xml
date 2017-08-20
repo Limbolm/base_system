@@ -17,6 +17,39 @@
         </if>
     </select>
 
+    <delete id="deleteByIds" parameterType="java.util.HashMap" >
+        DELETE FROM ${tableName} WHERE  1=1 id IN (${ids})
+    </delete>
+
+    <update id="updateByid" parameterType="java.util.HashMap">
+        UPDATE FROM ${tableName}
+        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
+            #{key}
+        </foreach>
+        VALUES
+        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
+            #{value}
+        </foreach>
+        WHERE 1=1
+        AND id =${id}
+    </update>
+
+
+
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from alertconditiontable
+        <if test="list != null and list.size != 0">
+            where
+            <foreach collection="map" index="entryKey" item="entryValue" open="(" close=")" separator="and" >
+                ${entryKey} = #{entryValue}
+            </foreach>
+        </if>
+        limit #{limitStart} , #{limitEnd};
+    </select>
+
 
 
 </mapper>

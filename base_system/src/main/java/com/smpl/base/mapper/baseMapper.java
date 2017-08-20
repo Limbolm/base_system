@@ -16,28 +16,28 @@ public interface baseMapper {
      * @param map
      * @return
      */
-    DataMap selectById(DataMap map);
+    DataMap selectById(DataMap map)throws Exception;
 
     /**
      * 根据实体类查询数据
      * @param map
      * @return
      */
-    List<DataMap> selectList(DataMap map);
+    List<DataMap> selectList(DataMap map)throws Exception;
 
     /**
      * 根据属性查询数据
      * @param map
      * @return
      */
-    List<DataMap> selectByAttribute(DataMap map);
+    List<DataMap> selectByAttribute(DataMap map)throws Exception;
 
 
     /**
      * 删除
      * @param map
      */
-    void delete(DataMap map);
+    void delete(DataMap map)throws Exception;
 
 
     /**
@@ -45,14 +45,14 @@ public interface baseMapper {
      * @param map
      * @return
      */
-    Integer update(DataMap map);
+    Integer update(DataMap map)throws Exception;
 
     /**
      * 新增
      * @param map
      * @return
      */
-    Integer insert(DataMap map);
+    Integer insert(DataMap map)throws Exception;
 
 
 

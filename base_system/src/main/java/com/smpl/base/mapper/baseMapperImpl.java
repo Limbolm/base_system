@@ -1,5 +1,6 @@
 package com.smpl.base.mapper;
 
+import com.smpl.base.Exception.BusinessException;
 import com.smpl.base.Utils.StringUtils;
 import com.smpl.base.entity.DataMap;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -27,34 +28,37 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
 
 
     @Override
-    public DataMap selectById(DataMap map) {
+    public DataMap selectById(DataMap map)throws Exception {
+        map=builSqlData("Base-mapper.selectById",map);
+        getSqlSession().selectOne(map.getStr("MapperId"),map);
+        return map;
+    }
 
-        getSqlSession().selectOne("");
+    @Override
+    public List<DataMap> selectList(DataMap map)throws Exception {
+        map=builSqlData("Base-mapper.selectByAttribute",map);
+        return getSqlSession().selectList(map.getStr("MapperId"),map);
+    }
+
+    @Override
+    public void delete(DataMap map) throws Exception{
+        map=builSqlData("Base-mapper.deleteByIds",map);
+        getSqlSession().delete(map.getStr("MapperId"),map);
+    }
+
+    @Override
+    public Integer update(DataMap map)throws Exception {
         return null;
     }
 
     @Override
-    public List<DataMap> selectList(DataMap map) {
-        return getSqlSession().selectList("");
-    }
-
-    @Override
-    public void delete(DataMap map) {
-
-    }
-
-    @Override
-    public Integer update(DataMap map) {
+    public Integer insert(DataMap map) throws Exception{
+        getSqlSession().insert("");
         return null;
     }
 
     @Override
-    public Integer insert(DataMap map) {
-        return null;
-    }
-
-    @Override
-    public List<DataMap> selectByAttribute(DataMap map) {
+    public List<DataMap> selectByAttribute(DataMap map)throws Exception {
         return null;
     }
 
@@ -62,13 +66,22 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
      * 构建sql方法
      */
 
-    private DataMap builSqlData(DataMap map){
+    private DataMap builSqlData(String mapperStr,DataMap map)throws Exception{
         DataMap dataMap=new DataMap();
-        if (!StringUtils.isEmpty(map.getMapperId())){
-            dataMap.put("mapperId",map.getMapperId());
+        //判断 map中是否 传入MapperId  如无则使用 mapperStr
+        if (StringUtils.isEmpty(map.getStr(map.getMapperId()))){
+            dataMap.put("MapperId",mapperStr);
+        }else {
+            dataMap.put("MapperId",map.getMapperId());
         }
 
-        return null;
+        if (StringUtils.isEmpty(map.getStr("tableName"))){
+            throw new BusinessException("获取不到表名，查询失败！");
+        }
+        return dataMap;
     }
+
+
+
 
 }
