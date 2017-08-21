@@ -7,12 +7,17 @@ public class SystemException extends  RuntimeException {
 
     private  String msg;//异常信息
 
-    public SystemException(String message, String msg) {
-        super(message);
+    public SystemException(Throwable cause, String msg) {
+        super(cause);
         this.msg = msg;
     }
 
+    public SystemException(String msg) {
+        this.msg = msg;
+    }
 
-
-
+    public SystemException(String message, Throwable cause, String msg) {
+        super(message, cause);
+        this.msg = msg;
+    }
 }

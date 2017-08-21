@@ -35,19 +35,27 @@
     </update>
 
 
+    <insert id="addEntity" parameterType="java.util.HashMap">
+        INSERT FROM ${tableName}
+        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
+            #{key}
+        </foreach>
+        VALUES
+        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
+            #{value}
+        </foreach>
+    </insert>
 
 
-    <select id="selectAll" resultMap="BaseResultMap">
+
+
+    <select id="selectByAttribute" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
-        from alertconditiontable
-        <if test="list != null and list.size != 0">
+        from  ${tableName}
             where
             <foreach collection="map" index="entryKey" item="entryValue" open="(" close=")" separator="and" >
                 ${entryKey} = #{entryValue}
             </foreach>
-        </if>
-        limit #{limitStart} , #{limitEnd};
     </select>
 
 
