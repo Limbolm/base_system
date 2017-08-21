@@ -48,18 +48,21 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
 
     @Override
     public Integer update(DataMap map)throws Exception {
-        return null;
+        map=builSqlData("Base-mapper.updateByid",map);
+        return getSqlSession().update(map.getStr("MapperId"),map);
     }
 
     @Override
     public Integer insert(DataMap map) throws Exception{
-        getSqlSession().insert("");
-        return null;
+        map=builSqlData("Base-mapper.addEntity",map);
+        return getSqlSession().insert(map.getStr("MapperId"),map);
     }
 
     @Override
     public List<DataMap> selectByAttribute(DataMap map)throws Exception {
-        return null;
+        map=builSqlData("Base-mapper.addEntity",map);
+        List<DataMap> maps=getSqlSession().selectList(map.getStr("MapperId"),map);
+        return maps;
     }
 
     /**

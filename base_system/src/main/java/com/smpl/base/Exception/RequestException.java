@@ -8,8 +8,18 @@ public class RequestException extends RuntimeException {
 
     private  String msg;//异常信息
 
-    public RequestException(String message, String msg) {
-        super(message);
+
+    public RequestException(String msg) {
+        this.msg = msg;
+    }
+
+    public RequestException(String message, Throwable cause, String msg) {
+        super(message, cause);
+        this.msg = msg;
+    }
+
+    public RequestException(Throwable cause, String msg) {
+        super(cause);
         this.msg = msg;
     }
 }
