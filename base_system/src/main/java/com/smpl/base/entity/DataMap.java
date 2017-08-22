@@ -15,7 +15,12 @@ public class DataMap<k,v> extends HashMap implements Serializable{
      */
 
     public final String getStr(String key){
-        return this.get(key).toString();
+        try {
+            return this.get(key).toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void setMapperId(String mapperId) {

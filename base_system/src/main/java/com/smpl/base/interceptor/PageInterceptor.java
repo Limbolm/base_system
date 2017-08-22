@@ -20,7 +20,7 @@ import java.util.Properties;
 /**
  * 自定义物理分页
  */
-@Intercepts({@Signature(type = StatementHandler.class,method = "prepare",args = {Connection.class})})
+@Intercepts({@Signature(type = StatementHandler.class,method = "prepare",args = {Connection.class, Integer.class})})
 public class PageInterceptor implements Interceptor{
     private String dialect = ""; //数据库方言
     private String pageSqlId = ""; //mapper.xml中需要拦截的ID(正则匹配)
@@ -33,7 +33,7 @@ public class PageInterceptor implements Interceptor{
         MappedStatement mappedStatement= (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         String sqlId=mappedStatement.getId();
 
-        if (sqlId.matches(pageSqlId)){
+        if (sqlId.indexOf(pageSqlId)>0){
             BoundSql boundSql=statementHandler.getBoundSql();
 
             String sql= boundSql.getSql();
@@ -60,8 +60,6 @@ public class PageInterceptor implements Interceptor{
             String pageSql = sql + " limit " + pageInfo.getDbIndex() + "," + pageInfo.getPageSize();
 
             metaObject.setValue("delegate.boundSql.sql", pageSql);
-
-
 
         }
 
