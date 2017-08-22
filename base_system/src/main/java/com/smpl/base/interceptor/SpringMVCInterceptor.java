@@ -20,7 +20,7 @@ public class SpringMVCInterceptor implements HandlerInterceptor {
         //首页为公开链接
         //TODO:公开链接 可作成 文件配置 的方式  后期
         String url=request.getRequestURI();
-        if (url.indexOf("index.smpl")>0){
+        if (url.indexOf("index.smpl")>0||url.indexOf("test")>0){
             return true;
         }
         HttpSession session=request.getSession();
