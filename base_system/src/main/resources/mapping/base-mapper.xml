@@ -11,10 +11,14 @@
     </select>
     
     <select id="selectByAttribute"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
-        SELECT * FROM #{tableName} WHERE  1=1
+        SELECT * FROM ${tableName} WHERE  1=1
         <if test="attributeValue!=null and attributeValue!=''">
             AND ${attributeKey} = ${attributeValue}
         </if>
+    </select>
+
+    <select id="selectqueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT * FROM ${tableName} WHERE  1=1
     </select>
 
     <delete id="deleteByIds" parameterType="java.util.HashMap" >
@@ -35,7 +39,7 @@
 
 
     <insert id="addEntity" parameterType="java.util.HashMap">
-        INSERT FROM ${tableName}
+        INSERT INTO ${tableName}
         <if test="key !=null and key!=''">
             ${key} VALUES
         </if>
