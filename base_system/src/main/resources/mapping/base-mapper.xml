@@ -39,7 +39,7 @@
 
 
     <insert id="addEntity" parameterType="java.util.HashMap">
-        INSERT FROM ${tableName}
+        INSERT INTO ${tableName}
         <if test="key !=null and key!=''">
             ${key} VALUES
         </if>

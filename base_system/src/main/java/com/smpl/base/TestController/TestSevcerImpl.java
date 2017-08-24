@@ -36,11 +36,12 @@ public class TestSevcerImpl implements TestServce {
 
     @Override
     public void add() {
-        DataMap map=new DataMap();
-        map.put("ACC_ID",3);
-        map.put("ACC_CODE",3);
+        DataMap<String,String> map=new DataMap<String,String>();
+        map.put("id","3");
+        map.put("ACC_CODE","3");
         map.put("ACC_NAME","Ago3");
         map.put("ACC_PASSWORD","Ago3");
+        map.put("tableName","t_account");
         try {
             baseMapper.insert(map);
         } catch (Exception e) {
