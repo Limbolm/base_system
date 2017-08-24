@@ -1,20 +1,27 @@
 package com.smpl.base.interceptor;
 
+import com.smpl.base.Exception.BusinessException;
+import com.smpl.base.entity.PageInfo;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
-import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
-import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.session.Configuration;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * 自定义物理分页
@@ -54,7 +61,7 @@ public class PageInterceptor implements Interceptor{
         }
         BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
         Object parameterObject = boundSql.getParameterObject();
-        Object pageParams = getPageParamsForParamObj(parameterObject);
+        PageInfo pageParams = getPageParamsForParamObj(parameterObject);
         if (pageParams == null) { //无法获取分页参数，不进行分页。
             return invocation.proceed();
         }
@@ -64,18 +71,18 @@ public class PageInterceptor implements Interceptor{
             return invocation.proceed();
         }
         //获取相关配置的参数.
-        Integer pageNum = pageParams.getPage() == null? defaultPage : pageParams.getPage();
+        Integer pageNum = pageParams.getPageNumber() == null? defaultPage : pageParams.getPageNumber();
         Integer pageSize = pageParams.getPageSize() == null? defaultPageSize : pageParams.getPageSize();
-        Boolean checkFlag = pageParams.getCheckFlag() == null? defaultCheckFlag : pageParams.getCheckFlag();
-        Boolean cleanOrderBy = pageParams.getCleanOrderBy() == null? defaultCleanOrderBy : pageParams.getCleanOrderBy();
+        Boolean checkFlag = defaultCheckFlag;
+        Boolean cleanOrderBy = defaultCleanOrderBy;
         //计算总条数
         int total = this.getTotal(invocation, metaStatementHandler, boundSql, cleanOrderBy, dbType);
         //回填总条数到分页参数
-        pageParams.setTotal(total);
+        pageParams.setTotalCount(total);
         //计算总页数.
         int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
         //回填总页数到分页参数.
-        pageParams.setTotalPage(totalPage);
+        pageParams.setTotalPageNumber(totalPage);
         //检查当前页码的有效性.
         this.checkPage(checkFlag, pageNum, totalPage);
         //修改sql
@@ -89,8 +96,8 @@ public class PageInterceptor implements Interceptor{
      * @return 分页参数
      * @throws Exception
      */
-    public PageParams getPageParamsForParamObj(Object parameterObject) throws Exception {
-        PageParams pageParams = null;
+    public PageInfo getPageParamsForParamObj(Object parameterObject) throws Exception {
+        PageInfo pageParams = null;
         if (parameterObject == null) {
             return null;
         }
@@ -103,20 +110,20 @@ public class PageInterceptor implements Interceptor{
             while(iterator.hasNext()) {
                 String key = iterator.next();
                 Object value = paramMap.get(key);
-                if (value instanceof PageParams) {
-                    return (PageParams)value;
+                if (value instanceof PageInfo) {
+                    return (PageInfo)value;
                 }
             }
-        } else if (parameterObject instanceof PageParams) { //参数POJO继承了PageParams
-            return (PageParams) parameterObject;
+        } else if (parameterObject instanceof PageInfo) { //参数POJO继承了PageParams
+            return (PageInfo) parameterObject;
         } else { //从POJO尝试读取分页参数.
             Field[] fields = parameterObject.getClass().getDeclaredFields();
             //尝试从POJO中获得类型为PageParams的属性
             for (Field field : fields) {
-                if (field.getType() == PageParams.class) {
+                if (field.getType() == PageInfo.class) {
                     PropertyDescriptor pd = new PropertyDescriptor (field.getName(), parameterObject.getClass());
                     Method method = pd.getReadMethod();
-                    return (PageParams) method.invoke(parameterObject);
+                    return (PageInfo) method.invoke(parameterObject);
                 }
             }
         }
@@ -295,13 +302,13 @@ public class PageInterceptor implements Interceptor{
      * @return 改写后的SQL
      * @throws NotSupportedException
      */
-    private String getTotalSQL(String currSql, String dbType) throws NotSupportedException {
+    private String getTotalSQL(String currSql, String dbType) throws BusinessException {
         if (DB_TYPE_MYSQL.equals(dbType)) {
             return  "select count(*) as total from (" + currSql + ") $_paging";
         } else if (DB_TYPE_ORACLE.equals(dbType)) {
             return "select count(*) as total from (" + currSql +")";
         } else {
-            throw new NotSupportedException("当前插件未支持此类型数据库");
+            throw new BusinessException("当前插件未支持此类型数据库");
         }
     }
 
@@ -313,13 +320,13 @@ public class PageInterceptor implements Interceptor{
      * @return 改写后的SQL
      * @throws NotSupportedException
      */
-    private String getPageDataSQL(String currSql, String dbType) throws NotSupportedException {
+    private String getPageDataSQL(String currSql, String dbType) throws BusinessException {
         if (DB_TYPE_MYSQL.equals(dbType)) {
             return "select * from (" + currSql + ") $_paging_table limit ?, ?";
         } else if (DB_TYPE_ORACLE.equals(dbType)) {
             return " select * from (select cur_sql_result.*, rownum rn from (" + currSql + ") cur_sql_result  where rownum <= ?) where rn > ?";
         } else {
-            throw new NotSupportedException("当前插件未支持此类型数据库");
+            throw new BusinessException("当前插件未支持此类型数据库");
         }
     }
 
@@ -342,7 +349,7 @@ public class PageInterceptor implements Interceptor{
             ps.setInt(idx -1, pageNum * pageSize);//结束行
             ps.setInt(idx, (pageNum - 1) * pageSize); //开始行
         } else {
-            throw new NotSupportedException("当前插件未支持此类型数据库");
+            throw new BusinessException("当前插件未支持此类型数据库");
         }
 
     }
@@ -367,7 +374,7 @@ public class PageInterceptor implements Interceptor{
             }
         }
         if (null == dbConnectionStr || dbConnectionStr.trim().equals(""))  {
-            throw new NotSupportedException("当前插件未能获得数据库连接信息。");
+            throw new BusinessException("当前插件未能获得数据库连接信息。");
         }
         dbConnectionStr = dbConnectionStr.toLowerCase();
         if (dbConnectionStr.contains(DB_TYPE_MYSQL)) {
@@ -375,7 +382,7 @@ public class PageInterceptor implements Interceptor{
         } else if (dbConnectionStr.contains(DB_TYPE_ORACLE)) {
             return DB_TYPE_ORACLE;
         } else {
-            throw new NotSupportedException("当前插件未支持此类型数据库");
+            throw new BusinessException("当前插件未支持此类型数据库");
         }
     }
 
