@@ -54,6 +54,14 @@ public interface BaseMapper {
      */
     Integer insert(DataMap map)throws Exception;
 
+    /**
+     * 分页查询
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    List<DataMap> selectListqueryPage(DataMap map)throws Exception;
+
 
 
 

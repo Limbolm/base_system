@@ -17,6 +17,10 @@
         </if>
     </select>
 
+    <select id="selectqueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT * FROM ${tableName} WHERE  1=1
+    </select>
+
     <delete id="deleteByIds" parameterType="java.util.HashMap" >
         DELETE FROM ${tableName} WHERE  1=1 id IN (${ids})
     </delete>
@@ -35,13 +39,13 @@
     </update>
 
 
-    <insert id="addEntity" parameterType="java.util.HashMap">
-        INSERT FROM ${tableName}
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
+    <insert id="addEntity" parameterType="com.smpl.base.entity.DataMap">
+        INSERT FROM t_account
+        <foreach item="value" index="key" collection="map" open="(" separator="),(" close=")">
             #{key}
         </foreach>
         VALUES
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
+        <foreach item="value" index="key" collection="map" open="(" separator="),(" close=")">
             #{value}
         </foreach>
     </insert>

@@ -42,6 +42,12 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
     }
 
     @Override
+    public List<DataMap> selectListqueryPage(DataMap map)throws Exception {
+        map=builSqlData("Base-mapper.selectqueryPage",map);
+        return getSqlSession().selectList(map.getStr("MapperId"),map);
+    }
+
+    @Override
     public void delete(DataMap map) throws Exception{
         map=builSqlData("Base-mapper.deleteByIds",map);
         getSqlSession().delete(map.getStr("MapperId"),map);
@@ -55,8 +61,8 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
 
     @Override
     public Integer insert(DataMap map) throws Exception{
-        map=builSqlData("Base-mapper.addEntity",map);
-        return getSqlSession().insert(map.getStr("MapperId"),map);
+       /* map=builSqlData("Base-mapper.addEntity",map);*/
+        return getSqlSession().insert("Base-mapper.addEntity",map);
     }
 
     @Override
@@ -78,9 +84,9 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
             map.put("MapperId",map.getMapperId());
         }
 
-        if (StringUtils.isEmpty(map.getStr("tableName"))){
+       /* if (StringUtils.isEmpty(map.getStr("tableName"))){
             throw new BusinessException("获取不到表名，查询失败！");
-        }
+        }*/
         return map;
     }
 

@@ -19,9 +19,9 @@ private TestServce testServce;
 
     @RequestMapping("/findByAll")
     public List<DataMap> queryByList(){
-        List<DataMap> list=testServce.findByAll();
-
-        return list;
+       /* List<DataMap> list=testServce.findByAll();*/
+        testServce.add();
+        return null;
 
     }
 

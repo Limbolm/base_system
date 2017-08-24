@@ -1,6 +1,7 @@
 package com.smpl.base.TestController;
 
 import com.smpl.base.entity.DataMap;
+import com.smpl.base.entity.PageInfo;
 import com.smpl.base.mapper.BaseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,13 @@ public class TestSevcerImpl implements TestServce {
     public List<DataMap> findByAll() {
 
         DataMap map=new DataMap();
+        PageInfo pageInfo=new PageInfo();
+        pageInfo.setPageNumber(1);
+        pageInfo.setPageSize(5);
         map.put("tableName","t_account");
+        map.put("pageInfo",pageInfo);
         try {
-            return baseMapper.selectList(map);
+            return baseMapper.selectListqueryPage(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,6 +36,17 @@ public class TestSevcerImpl implements TestServce {
 
     @Override
     public void add() {
+        DataMap map=new DataMap();
+        map.put("ACC_ID",3);
+        map.put("ACC_CODE",3);
+        map.put("ACC_NAME","Ago3");
+        map.put("ACC_PASSWORD","Ago3");
+        try {
+            baseMapper.insert(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 
