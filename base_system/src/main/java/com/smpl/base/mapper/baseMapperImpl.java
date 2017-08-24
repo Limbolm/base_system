@@ -97,12 +97,17 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
         // 构造 字段值
         StringBuffer keyBuffer=new StringBuffer("(");
         StringBuffer valueBuffer=new StringBuffer("(");
+
+        int i=0;
         for (Map.Entry<String,String> entry:map.entrySet()){
+            i++;
             if (!(entry.getKey().equals("MapperId")||entry.getKey().equals("tableName")||entry.getKey().equals("id"))){
                 keyBuffer.append(entry.getKey());
-                keyBuffer.append(",");
                 valueBuffer.append(entry.getValue());
-                valueBuffer.append(",");
+                if (i!=(map.size()-1)){
+                    keyBuffer.append(",");
+                    valueBuffer.append(",");
+                }
             }
 
         }
