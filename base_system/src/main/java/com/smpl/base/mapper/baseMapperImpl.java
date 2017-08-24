@@ -124,8 +124,8 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
         return dataMap;
         }
 
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
         DataMap dataMap=new DataMap();
         dataMap.put("MapperId","testMapperID");
         dataMap.put("tableName","tsetTableName");
