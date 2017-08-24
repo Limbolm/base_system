@@ -92,23 +92,23 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
      * @param map
      * @return
      */
-    private DataMap builObject(DataMap map){
-        DataMap dataMap=new DataMap();
+    private static DataMap builObject(DataMap<String,String> map){
+        DataMap dataMap=new DataMap<String,String>();
         // 构造 字段值
         StringBuffer keyBuffer=new StringBuffer("(");
         StringBuffer valueBuffer=new StringBuffer("(");
-        Iterator<String> iterator=map.keySet().iterator();
-        while (iterator.hasNext()){
-            if (!iterator.next().equals("MapperId")||!iterator.next().equals("tableName")||iterator.next().equals("id")){
-                keyBuffer.append(iterator.next());
+        for (Map.Entry<String,String> entry:map.entrySet()){
+            if (!(entry.getKey().equals("MapperId")||entry.getKey().equals("tableName")||entry.getKey().equals("id"))){
+                keyBuffer.append(entry.getKey());
                 keyBuffer.append(",");
-                valueBuffer.append(map.getStr(iterator.next()));
+                valueBuffer.append(entry.getValue());
                 valueBuffer.append(",");
             }
+
         }
 
-        keyBuffer.toString().replace(keyBuffer.toString().charAt(keyBuffer.toString().length()-1), ')');
-        valueBuffer.toString().replace(valueBuffer.toString().charAt(valueBuffer.toString().length()-1), ')');
+        keyBuffer.append(")");
+        valueBuffer.append(")");
         dataMap.put("MapperId",map.getStr("MapperId"));
         dataMap.put("tableName",map.getStr("tableName"));
         dataMap.put("key",keyBuffer.toString());
@@ -119,5 +119,21 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
         return dataMap;
         }
 
+    public static void main(String[] args) {
+
+        DataMap dataMap=new DataMap();
+        dataMap.put("MapperId","testMapperID");
+        dataMap.put("tableName","tsetTableName");
+        dataMap.put("key","1");
+        dataMap.put("value","value1");
+        dataMap.put("key2","2");
+        dataMap.put("value2","value2");
+        dataMap.put("key3","3");
+        dataMap.put("value3","value3");
+
+        DataMap map=builObject(dataMap);
+
+        System.out.println(map.toString());
+    }
 
 }
