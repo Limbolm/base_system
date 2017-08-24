@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * Created by chenxiaopei on 2017/8/16.
  */
-public class DataMap<k,v> extends HashMap implements Serializable{
+public class DataMap<K,v> extends HashMap<K,v> implements Serializable{
 
     private String mapperId;
 
