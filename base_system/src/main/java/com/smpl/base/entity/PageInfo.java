@@ -16,7 +16,7 @@ public class PageInfo {
         return dbIndex;
     }
 
-    public void setDbIndex(int dbIndex) {
+    public void setDbIndex(Integer dbIndex) {
         this.dbIndex = dbIndex;
     }
 

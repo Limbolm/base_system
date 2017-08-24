@@ -27,27 +27,25 @@
 
     <update id="updateByid" parameterType="java.util.HashMap">
         UPDATE FROM ${tableName}
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
-            #{key}
-        </foreach>
-        VALUES
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
-            #{value}
-        </foreach>
+        <if test="key !=null and key!=''">
+            ${key} VALUES
+        </if>
+        <if test="value !=null and value!=''">
+            ${value}
+        </if>
         WHERE 1=1
         AND id =${id}
     </update>
 
 
-    <insert id="addEntity" parameterType="com.smpl.base.entity.DataMap">
-        INSERT FROM t_account
-        <foreach item="value" index="key" collection="map" open="(" separator="),(" close=")">
-            #{key}
-        </foreach>
-        VALUES
-        <foreach item="value" index="key" collection="map" open="(" separator="),(" close=")">
-            #{value}
-        </foreach>
+    <insert id="addEntity" parameterType="java.util.HashMap">
+        INSERT FROM ${tableName}
+        <if test="key !=null and key!=''">
+            ${key} VALUES
+        </if>
+        <if test="value !=null and value!=''">
+            ${value}
+        </if>
     </insert>
 
 </mapper>
