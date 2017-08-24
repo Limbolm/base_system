@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,12 +50,14 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
     @Override
     public Integer update(DataMap map)throws Exception {
         map=builSqlData("Base-mapper.updateByid",map);
+        map=builObject(map);
         return getSqlSession().update(map.getStr("MapperId"),map);
     }
 
     @Override
     public Integer insert(DataMap map) throws Exception{
         map=builSqlData("Base-mapper.addEntity",map);
+        map=builObject(map);
         return getSqlSession().insert(map.getStr("MapperId"),map);
     }
 
@@ -70,21 +73,51 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
      */
 
     private DataMap builSqlData(String mapperStr,DataMap map)throws Exception{
-        DataMap dataMap=new DataMap();
+
         //判断 map中是否 传入MapperId  如无则使用 mapperStr
         if (StringUtils.isEmpty(map.getStr(map.getMapperId()))){
-            dataMap.put("MapperId",mapperStr);
+            map.put("MapperId",mapperStr);
         }else {
-            dataMap.put("MapperId",map.getMapperId());
+            map.put("MapperId",map.getMapperId());
         }
 
         if (StringUtils.isEmpty(map.getStr("tableName"))){
             throw new BusinessException("获取不到表名，查询失败！");
         }
-        return dataMap;
+        return map;
     }
 
+    /**
+     * 为update add 方法构造参数对象
+     * @param map
+     * @return
+     */
+    private DataMap builObject(DataMap map){
+        DataMap dataMap=new DataMap();
+        // 构造 字段值
+        StringBuffer keyBuffer=new StringBuffer("(");
+        StringBuffer valueBuffer=new StringBuffer("(");
+        Iterator<String> iterator=map.keySet().iterator();
+        while (iterator.hasNext()){
+            if (!iterator.next().equals("MapperId")||!iterator.next().equals("tableName")||iterator.next().equals("id")){
+                keyBuffer.append(iterator.next());
+                keyBuffer.append(",");
+                valueBuffer.append(map.getStr(iterator.next()));
+                valueBuffer.append(",");
+            }
+        }
 
+        keyBuffer.toString().replace(keyBuffer.toString().charAt(keyBuffer.toString().length()-1), ')');
+        valueBuffer.toString().replace(valueBuffer.toString().charAt(valueBuffer.toString().length()-1), ')');
+        dataMap.put("MapperId",map.getStr("MapperId"));
+        dataMap.put("tableName",map.getStr("tableName"));
+        dataMap.put("key",keyBuffer.toString());
+        dataMap.put("value",valueBuffer.toString());
+        if (!StringUtils.isEmpty(map.getStr("id"))){
+            dataMap.put("id",map.getStr("id"));
+        }
+        return dataMap;
+        }
 
 
 }
