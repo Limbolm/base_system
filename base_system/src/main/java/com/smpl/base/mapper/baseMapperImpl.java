@@ -95,9 +95,8 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
     private static DataMap builObject(DataMap<String,String> map){
         DataMap dataMap=new DataMap<String,String>();
         // 构造 字段值
-        StringBuffer keyBuffer=new StringBuffer("(");
-        StringBuffer valueBuffer=new StringBuffer("(");
-
+        StringBuffer keyBuffer=new StringBuffer();
+        StringBuffer valueBuffer=new StringBuffer();
         int i=0;
         for (Map.Entry<String,String> entry:map.entrySet()){
             i++;
@@ -112,8 +111,6 @@ public class baseMapperImpl extends SqlSessionDaoSupport implements baseMapper {
 
         }
 
-        keyBuffer.append(")");
-        valueBuffer.append(")");
         dataMap.put("MapperId",map.getStr("MapperId"));
         dataMap.put("tableName",map.getStr("tableName"));
         dataMap.put("key",keyBuffer.toString());
