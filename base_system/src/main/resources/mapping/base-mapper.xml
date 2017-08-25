@@ -24,10 +24,10 @@
     <update id="updateByid" parameterType="java.util.HashMap">
         UPDATE FROM ${tableName}
         <if test="key !=null and key!=''">
-            ${key} VALUES
+            (key) VALUES
         </if>
         <if test="value !=null and value!=''">
-            ${value}
+            (value)
         </if>
         WHERE 1=1
         AND id =${id}
@@ -43,5 +43,16 @@
             ${value}
         </if>
     </insert>
+
+    <!-- 查找 对应表的所有字段-->
+    <select id="initTableField" resultType="java.util.HashMap">
+        select TABLE_NAME,group_concat(COLUMN_NAME) COLUMN_NAME
+        from information_schema.columns
+        where table_name in (${table_name}) and table_schema in (${database_name})  GROUP BY TABLE_NAME
+    </select>
+
+
+
+
 
 </mapper>
