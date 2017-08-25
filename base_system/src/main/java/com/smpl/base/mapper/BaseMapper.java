@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * 公共mpper类
  */
-public interface baseMapper {
+public interface BaseMapper {
 
     /**
      * 根据id查询数据
@@ -53,6 +53,14 @@ public interface baseMapper {
      * @return
      */
     Integer insert(DataMap map)throws Exception;
+
+    /**
+     * 分页查询
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    List<DataMap> selectListqueryPage(DataMap map)throws Exception;
 
 
 

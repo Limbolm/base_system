@@ -67,7 +67,7 @@ public class PageInterceptor implements Interceptor{
         }
 
         //获取配置中是否启用分页功能.
-        if (!(sql.indexOf(SQL_KEY)>0)) {  //不使用分页插件.
+        if (!(mappedStatement.getId().indexOf(SQL_KEY)>0)) {  //不使用分页插件.
             return invocation.proceed();
         }
         //获取相关配置的参数.
@@ -168,7 +168,7 @@ public class PageInterceptor implements Interceptor{
      * @param pageSize
      * @param dbType
      * @throws IllegalAccessException
-     * @throws InvocationTargetException
+     * @throws BusinessException
      */
     private Object preparedSQL(Invocation invocation, MetaObject metaStatementHandler, BoundSql boundSql, int pageNum, int pageSize, String dbType) throws Exception {
         //获取当前需要执行的SQL
@@ -300,7 +300,7 @@ public class PageInterceptor implements Interceptor{
      * 这里需要根据数据库的类型改写SQL，目前支持MySQL和Oracle
      * @param currSql —— 当前执行的SQL
      * @return 改写后的SQL
-     * @throws NotSupportedException
+     * @throws
      */
     private String getTotalSQL(String currSql, String dbType) throws BusinessException {
         if (DB_TYPE_MYSQL.equals(dbType)) {
@@ -318,7 +318,7 @@ public class PageInterceptor implements Interceptor{
      * 这里需要根据数据库的类型改写SQL，目前支持MySQL和Oracle
      * @param currSql —— 当前执行的SQL
      * @return 改写后的SQL
-     * @throws NotSupportedException
+     * @throws BusinessException
      */
     private String getPageDataSQL(String currSql, String dbType) throws BusinessException {
         if (DB_TYPE_MYSQL.equals(dbType)) {
@@ -333,8 +333,7 @@ public class PageInterceptor implements Interceptor{
     /**
      * TODO 需要使用其他数据库需要改写
      * 使用PreparedStatement预编译两个分页参数，如果数据库的规则不一样，需要改写设置的参数规则。目前支持MySQL和Oracle
-     * @throws SQLException
-     * @throws NotSupportedException
+     * @throws BusinessException
      *
      */
     private void preparePageDataParams(PreparedStatement ps, int pageNum, int pageSize, String dbType) throws Exception {

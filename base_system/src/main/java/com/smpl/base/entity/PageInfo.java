@@ -56,7 +56,7 @@ public class PageInfo {
         this.totalCount = totalCount;
     }
 
-    public void setTotalPageNumber(int totalPageNumber) {
+    public void setTotalPageNumber(Integer totalPageNumber) {
         this.totalPageNumber = totalPageNumber;
     }
 
