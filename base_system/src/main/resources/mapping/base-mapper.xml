@@ -17,7 +17,7 @@
         </if>
     </select>
 
-    <select id="selectQueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    <select id="selectqueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
         SELECT * FROM ${tableName} WHERE  1=1
     </select>
 
