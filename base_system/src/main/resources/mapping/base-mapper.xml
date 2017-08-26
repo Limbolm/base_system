@@ -26,37 +26,22 @@
     </delete>
 
     <update id="updateByid" parameterType="java.util.HashMap">
-        UPDATE FROM ${tableName}
-        <if test="key !=null and key!=''">
-            (key) VALUES
-        </if>
-        <if test="value !=null and value!=''">
-            (value)
-        </if>
+        UPDATE FROM table （key）VALUES (value)
         WHERE 1=1
         AND id =${id}
     </update>
 
 
     <insert id="addEntity" parameterType="java.util.HashMap">
-        INSERT INTO ${tableName}
-        <if test="key !=null and key!=''">
-            ${key} VALUES
-        </if>
-        <if test="value !=null and value!=''">
-            ${value}
-        </if>
+        INSERT INTO table （key）VALUES (value)
     </insert>
 
-    <!-- 查找 对应表的所有字段-->
-    <select id="initTableField" resultType="java.util.HashMap">
+
+    <!--根据表明获取表的所有字段-->
+    <select id="queryTableColum" resultType="java.util.HashMap">
         select TABLE_NAME,group_concat(COLUMN_NAME) COLUMN_NAME
         from information_schema.columns
         where table_name in (${table_name}) and table_schema in (${database_name})  GROUP BY TABLE_NAME
     </select>
-
-
-
-
 
 </mapper>

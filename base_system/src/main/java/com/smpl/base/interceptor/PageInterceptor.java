@@ -25,6 +25,8 @@ import java.util.Set;
 
 /**
  * 自定义物理分页
+ * 需要分页的sql 传入的mapperId 必须含有 QueryPage
+ *
  */
 @Intercepts({@Signature(type = StatementHandler.class,method = "prepare",args = {Connection.class, Integer.class})})
 public class PageInterceptor implements Interceptor{
@@ -40,7 +42,7 @@ public class PageInterceptor implements Interceptor{
     private static final String DB_TYPE_MYSQL = "mysql";
     private static final String DB_TYPE_ORACLE = "oracle";
 
-    private static final String SQL_KEY="queryPage"; //判断 是否进行分页key
+    private static final String SQL_KEY="QueryPage"; //判断 是否进行分页key
 
     /**
      * 插件实现方法
@@ -48,12 +50,27 @@ public class PageInterceptor implements Interceptor{
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler stmtHandler = (StatementHandler) getUnProxyObject(invocation.getTarget());
-
         MetaObject metaStatementHandler = SystemMetaObject.forObject(stmtHandler);
         String sql = (String) metaStatementHandler.getValue("delegate.boundSql.sql");
-
         MappedStatement mappedStatement =  (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
         String dbType = this.getDataSourceType(mappedStatement);
+
+        //区分查询是自定义 mapper.xml 还是 base-mapper
+        if(mappedStatement.getId().indexOf("Base-mapper")>-1){
+            //基于Base-mapper 的CRUD 统一经过处理 拼接sql后 再执行
+            if (mappedStatement.getSqlCommandType().equals("SELCT")){//查询
+
+            }else if(mappedStatement.getSqlCommandType().equals("INSERT")){ //新增
+
+            }else if(mappedStatement.getSqlCommandType().equals("UPDATE")){//更新
+
+            }else if (mappedStatement.getSqlCommandType().equals("DELETE")){//删除
+
+            }
+
+        }
+
+
 
         //不是select语句.
         if (!this.checkSelect(sql)) {
