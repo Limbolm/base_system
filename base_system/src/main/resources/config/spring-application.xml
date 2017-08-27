@@ -56,7 +56,7 @@
 
 
  <!--mysql分页工具-->
-	<bean id="pageInterceptor" class="com.smpl.base.interceptor.PageInterceptor">
+	<bean id="pageInterceptor" class="com.smpl.base.interceptor.InterceptorOfPage">
 		<property name="properties">
 			<props>
 				<prop key="helperDialect">mysql</prop>

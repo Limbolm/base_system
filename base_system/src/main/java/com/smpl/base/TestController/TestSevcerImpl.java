@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by chenxiaopei on 2017/8/22.
  */
-@Service("testServce")
+@Service(value = "testServce")
 public class TestSevcerImpl implements TestServce {
 
     @Autowired
@@ -37,11 +37,10 @@ public class TestSevcerImpl implements TestServce {
     @Override
     public void add() {
         DataMap<String,String> map=new DataMap<String,String>();
-        map.put("id","3");
-        map.put("ACC_CODE","3");
-        map.put("ACC_NAME","Ago3");
-        map.put("ACC_PASSWORD","Ago3");
-        map.put("tableName","t_account");
+        map.put("userCode","3");
+        map.put("name","Ago3");
+        map.put("password","Ago3");
+        map.put("tableName","userInfouserInfo");
         try {
             baseMapper.insert(map);
         } catch (Exception e) {
