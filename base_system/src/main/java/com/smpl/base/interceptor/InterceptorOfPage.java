@@ -10,10 +10,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMapping.Builder;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
@@ -75,12 +72,23 @@ public class InterceptorOfPage implements Interceptor {
     }
 
     @Override
-    public Object plugin(Object o) {
-        return null;
+    public Object plugin(Object statementHandler) {
+        return Plugin.wrap(statementHandler, this);
     }
 
     @Override
-    public void setProperties(Properties properties) {
+    public void setProperties(Properties props) {
+        String strDefaultPage = props.getProperty("default.page", "1");
+        String strDefaultPageSize = props.getProperty("default.pageSize", "50");
+        String strDefaultUseFlag = props.getProperty("default.useFlag", "false");
+        String strDefaultCheckFlag = props.getProperty("default.checkFlag", "false");
+        String StringDefaultCleanOrderBy = props.getProperty("default.cleanOrderBy", "false");
+
+        this.defaultPage = Integer.parseInt(strDefaultPage);
+        this.defaultPageSize = Integer.parseInt(strDefaultPageSize);
+        this.defaultUseFlag = Boolean.parseBoolean(strDefaultUseFlag);
+        this.defaultCheckFlag = Boolean.parseBoolean(strDefaultCheckFlag);
+        this.defaultCleanOrderBy = Boolean.parseBoolean(StringDefaultCleanOrderBy);
 
     }
 
