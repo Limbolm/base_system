@@ -187,90 +187,110 @@ public class PageInterceptor implements Interceptor {
     //构造sql 查询 语句 及参数
     private void createSqlData( MappedStatement mappedStatement,BoundSql boundSql,Object parameterObject) throws Exception {
 
-        Map map= (Map) parameterObject;
-        String cloumNameOfString="";
-        String tableName="";
-        String sql="";
-        List<ParameterMapping> paraList =new ArrayList<ParameterMapping>();
+        Map map = (Map) parameterObject;
+        String cloumNameOfString = "";
+        String tableName = "";
+        String sql = "";
+        List<ParameterMapping> paraList = new ArrayList<ParameterMapping>();
         Configuration configuration = mappedStatement.getConfiguration();
-        if (null!=map){
+        if (null != map) {
+
+            //TODO: 测试数据
             /*tableName=map.get("tabaleName").toString();*/
-            tableName="sys.userInfo";
+            tableName = "sys.userInfo";
             //根据表名获取字段名称String
             //TODO: 前期为 从本地缓存中 获取，后期迁移至 redis
             /*Map<String,Object> tableMap= (Map<String, Object>) EhcacheUtils.get(tableName);*/
             /*cloumNameOfString=tableMap.get("cloum").toString();*/
-            cloumNameOfString="userCode,name,password";
+            cloumNameOfString = "userCode,name,password";
         }
 
         //判断 执行语句的类型 CRUD
-        if ("INSERT".equals(mappedStatement.getSqlCommandType().name())){
-            StringBuilder  cloum=new StringBuilder();
-            StringBuilder cloumValue=new StringBuilder();
-            String[] cloumNames=cloumNameOfString.split(",");
+        if ("INSERT".equals(mappedStatement.getSqlCommandType().name())) {
+            StringBuilder cloum = new StringBuilder();
+            StringBuilder cloumValue = new StringBuilder();
+            String[] cloumNames = cloumNameOfString.split(",");
 
             //循环遍历传入 对象  获取 列和对应值
-            for (String cloumName:cloumNames){
-               Object o= map.get(cloumName);
-                if (o!=null){
-                    cloum.append(cloumName+ ",") ;
+            for (String cloumName : cloumNames) {
+                Object o = map.get(cloumName);
+                if (o != null) {
+                    cloum.append(cloumName + ",");
                     cloumValue.append("?,");
                     //传入参数类型获取 转换  相当于 $ #
-                    Builder mappring= new ParameterMapping.Builder(configuration,cloumName,o.getClass());
-                    ParameterMapping parameter=mappring.build();
+                    Builder mappring = new ParameterMapping.Builder(configuration, cloumName, o.getClass());
+                    ParameterMapping parameter = mappring.build();
                     paraList.add(parameter);
 
                 }
             }
-            sql = "insert into " + tableName.toString() + " (" + cloum.substring(0,cloum.length()-1) + ")  values (" +cloumValue.substring(0,cloumValue.length()-1) + ")";
+            sql = "insert into " + tableName.toString() + " (" + cloum.substring(0, cloum.length() - 1) + ")  values (" + cloumValue.substring(0, cloumValue.length() - 1) + ")";
 
-        }else if ("UPDATE".equals(mappedStatement.getSqlCommandType().name())){
-            StringBuilder setColum=new StringBuilder();
-            StringBuilder setWhere=new StringBuilder(" where id = ?");
-            String[] cloumNames=cloumNameOfString.split(",");
-            for (String cloumName: cloumNames) {
-                Object o=map.get(cloumName);
-                if (null!=o){
-                    setColum.append(cloumName+"=?,");
-                    Builder mappring=new ParameterMapping.Builder(configuration,cloumName,o.getClass());
-                    ParameterMapping param=mappring.build();
+        } else if ("UPDATE".equals(mappedStatement.getSqlCommandType().name())) {
+            StringBuilder setColum = new StringBuilder();
+            StringBuilder setWhere = new StringBuilder(" where id = ?");
+            String[] cloumNames = cloumNameOfString.split(",");
+            for (String cloumName : cloumNames) {
+                Object o = map.get(cloumName);
+                if (null != o) {
+                    setColum.append(cloumName + "=?,");
+                    Builder mappring = new ParameterMapping.Builder(configuration, cloumName, o.getClass());
+                    ParameterMapping param = mappring.build();
                     paraList.add(param);
                 }
 
             }
-            if (!StringUtils.isEmpty(map.get("id").toString())){
-                Builder mappring=new ParameterMapping.Builder(configuration,"id",map.get("id").getClass());
-                ParameterMapping param=mappring.build();
+            if (!StringUtils.isEmpty(map.get("id").toString())) {
+                Builder mappring = new ParameterMapping.Builder(configuration, "id", map.get("id").getClass());
+                ParameterMapping param = mappring.build();
                 paraList.add(param);
             }
-            sql="UPDATE "+tableName+" set "+setColum.toString().substring(0,setColum.length()-1)+setWhere.toString();
-        }else if ("DELETE".equals(mappedStatement.getSqlCommandType().name())){
-            if (map.containsKey("ids")){
-                sql="DELETE from "+tableName+" where  id in ("+map.get("ids")+")";
-            }else if (!map.containsKey("ids")&&map.containsKey("id")){
-                sql="DELETE from "+tableName+" where  id in ("+map.get("id")+")";
+            sql = "UPDATE " + tableName + " set " + setColum.toString().substring(0, setColum.length() - 1) + setWhere.toString();
+        } else if ("DELETE".equals(mappedStatement.getSqlCommandType().name())) {
+            if (map.containsKey("ids")) {
+                sql = "DELETE from " + tableName + " where  id in (" + map.get("ids") + ")";
+            } else if (!map.containsKey("ids") && map.containsKey("id")) {
+                sql = "DELETE from " + tableName + " where  id in (" + map.get("id") + ")";
             }
             //TODO:后期添加 更具字段删除
-        }else if ("SELECT".equals(mappedStatement.getSqlCommandType().name())){
-            //根据 mappedStatement.id 判断查询方式  findByID  findbyname findByatuibe
-            //根据分页参数 判断是否分页
-            Object parameterObj = boundSql.getParameterObject();
-            PageInfo pageParams = this.getPageParamsForParamObj(parameterObj);
-            //分页参数为空 则不需要分页
-            if (pageParams==null){
-                return;
+        } else if ("SELECT".equals(mappedStatement.getSqlCommandType().name())) {
+            //根据 mappedStatement.id 判断查询方式  findByID  findbyname findByatuibe 以上方法默认不需分页
+            if (mappedStatement.getId().indexOf("selectById") > -1) {
+                if (map.containsKey("id")) {
+                    sql = "select * from   " + tableName + " where id in (" + map.get("id").toString() + ")";
+                }
+            } else if (mappedStatement.getId().indexOf("selectByAttribute") > -1) {
+                StringBuilder setSelect = new StringBuilder("select * from " + tableName + " where 1=1  ");
+                String[] cloumNames = cloumNameOfString.split(",");
+                for (String cloumName : cloumNames) {
+                    Object o = map.get(cloumName);
+                    if (null != o) {
+                        setSelect.append("and " + cloumName + "=? ");
+                        Builder mappring = new ParameterMapping.Builder(configuration, cloumName, o.getClass());
+                        ParameterMapping param = mappring.build();
+                        paraList.add(param);
+                    }
+                    sql = setSelect.toString();
+                }
+
+                //根据分页参数 判断是否分页
+                Object parameterObj = boundSql.getParameterObject();
+                PageInfo pageParams = this.getPageParamsForParamObj(parameterObj);
+                //分页参数为空 则不需要分页
+                if (pageParams == null) {
+                    return;
+                }
+
+
             }
 
+            if (paraList.size() > 0) {
+                ReflectHelper.setValueByFieldName(boundSql, "parameterMappings", paraList);
+            }
 
+            ReflectHelper.setValueByFieldName(boundSql, "sql", sql);
 
         }
-
-        if (paraList.size()>0){
-            ReflectHelper.setValueByFieldName(boundSql,"parameterMappings",paraList);
-        }
-
-        ReflectHelper.setValueByFieldName(boundSql,"sql",sql);
-
     }
 
 
