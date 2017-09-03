@@ -37,12 +37,10 @@ public class TestSevcerImpl implements TestServce {
     @Override
     public void add() {
         DataMap<String,String> map=new DataMap<String,String>();
-        map.put("userCode","3");
-        map.put("name","Ago3");
-        map.put("password","Ago3");
+        map.put("id","2");
         map.put("tableName","userInfouserInfo");
         try {
-            baseMapper.insert(map);
+            baseMapper.delete(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
