@@ -17,11 +17,15 @@
         </if>
     </select>
 
-    <select id="selectqueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    <select id="selectQueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
         SELECT * FROM ${tableName} WHERE  1=1
     </select>
 
     <delete id="deleteByIds" parameterType="java.util.HashMap" >
+        DELETE FROM ${tableName} WHERE  1=1 id IN (${ids})
+    </delete>
+
+    <delete id="deleteByAttribute" parameterType="java.util.HashMap" >
         DELETE FROM ${tableName} WHERE  1=1 id IN (${ids})
     </delete>
 

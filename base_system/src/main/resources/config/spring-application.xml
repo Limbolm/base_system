@@ -60,7 +60,7 @@
 		<property name="properties">
 			<props>
 				<prop key="helperDialect">mysql</prop>
-				<prop key="sqlIdByPageRegex">*ByPage</prop>
+				<prop key="sqlIdByPageRegex">*QueryPage</prop>
 			</props>
 		</property>
 	</bean>
