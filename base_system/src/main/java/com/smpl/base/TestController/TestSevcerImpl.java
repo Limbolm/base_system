@@ -27,7 +27,7 @@ public class TestSevcerImpl implements TestServce {
         map.put("tableName","t_account");
         map.put("pageInfo",pageInfo);
         try {
-            return baseMapper.selectListqueryPage(map);
+            return baseMapper.findByPage(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,7 +40,7 @@ public class TestSevcerImpl implements TestServce {
         map.put("id","2");
         map.put("tableName","userInfouserInfo");
         try {
-            baseMapper.delete(map);
+            baseMapper.deleteById(map);
         } catch (Exception e) {
             e.printStackTrace();
         }

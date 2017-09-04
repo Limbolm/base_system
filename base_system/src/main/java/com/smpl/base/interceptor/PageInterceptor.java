@@ -251,8 +251,10 @@ public class PageInterceptor implements Interceptor {
                 sql = "DELETE from " + tableName + " where  id in (" + map.get("ids") + ")";
             } else if (!map.containsKey("ids") && map.containsKey("id")) {
                 sql = "DELETE from " + tableName + " where  id in (" + map.get("id") + ")";
+            }else if (mappedStatement.getId().indexOf("deleteByAttribute")>-1){
+                //TODO:后期添加 更具字段删除
+
             }
-            //TODO:后期添加 更具字段删除
         } else if ("SELECT".equals(mappedStatement.getSqlCommandType().name())) {
             //根据 mappedStatement.id 判断查询方式  findByID  findbyname findByatuibe 以上方法默认不需分页
             if (mappedStatement.getId().indexOf("selectById") > -1) {

@@ -11,58 +11,6 @@ import java.util.Objects;
  *  做为通用的dao 提供最基础的RCUD
  */
 public interface BaseMapper {
-
-    /**
-     * 根据id查询数据
-     * @param map
-     * @return
-     */
-    DataMap selectById(DataMap map)throws Exception;
-
-    /**
-     * 根据实体类查询数据
-     * @param map
-     * @return
-     */
-    List<DataMap> selectList(DataMap map)throws Exception;
-
-    /**
-     * 根据属性查询数据
-     * @param map
-     * @return
-     */
-    List<DataMap> selectByAttribute(DataMap map)throws Exception;
-
-
-    /**
-     * 删除
-     * @param map
-     */
-    void delete(DataMap map)throws Exception;
-
-
-    /**
-     * 更新
-     * @param map
-     * @return
-     */
-    Integer update(DataMap map)throws Exception;
-
-    /**
-     * 新增
-     * @param map
-     * @return
-     */
-    Integer insert(DataMap map)throws Exception;
-
-    /**
-     * 分页查询
-     * @param map
-     * @return
-     * @throws Exception
-     */
-    List<DataMap> selectListqueryPage(DataMap map)throws Exception;
-
     /**
      *
      *此为基础的dao层 只允许baseSevce 调用 其他的 业务sevce 全部继承 baseSevce
@@ -76,7 +24,68 @@ public interface BaseMapper {
      * 8.update 更新
      */
 
+    /**
+     * findByPage 分页查询
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    List<DataMap> findByPage(DataMap map)throws Exception;
 
+    /**
+     * 根据id 查询
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    DataMap findById(DataMap map)throws Exception;
 
+    /**
+     *  不分页查询
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    List<DataMap> findByList(DataMap map)throws Exception;
+
+    /**
+     * 根绝条件查询
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    List<DataMap> findByAttribute(DataMap map)throws Exception;
+
+    /**
+     * 新增
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    int insert(DataMap map)throws Exception;
+
+    /**
+     * 根据id 删除
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    int deleteById(DataMap map)throws Exception;
+
+    /**
+     * 根据条件 尽心删除
+     * @param map
+     * @return 返回删除 数目
+     * @throws Exception
+     */
+    int deleteByAttribute(DataMap map)throws Exception;
+
+    /**
+     * 更新
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    int update(DataMap map)throws Exception;
 
 }

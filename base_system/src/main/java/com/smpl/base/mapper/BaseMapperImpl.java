@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by chenxiaopei on 2017/8/27.
+ * BaseMapper 实现类
  */
 
 @Service(value = "baseMapper")
@@ -29,53 +29,57 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
 
 
     @Override
-    public DataMap selectById(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.selectById", map);
-        getSqlSession().selectOne(map.getStr("MapperId"), map);
-        return map;
-    }
-
-    @Override
-    public List<DataMap> selectList(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.selectByAttribute", map);
+    public List<DataMap> findByPage(DataMap map) throws Exception {
+        verification("Base-mapper.selectQueryPage",map);
         return getSqlSession().selectList(map.getStr("MapperId"), map);
     }
 
     @Override
-    public List<DataMap> selectByAttribute(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.selectByAttribute", map);
+    public DataMap findById(DataMap map) throws Exception {
+        verification("Base-mapper.selectById",map);
+        return getSqlSession().selectOne(map.getStr("MapperId"), map);
+    }
+
+    @Override
+    public List<DataMap> findByList(DataMap map) throws Exception {
+        verification("Base-mapper.selectByAttribute",map);
         return getSqlSession().selectList(map.getStr("MapperId"), map);
     }
 
     @Override
-    public void delete(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.deleteByIds", map);
-        getSqlSession().delete(map.getStr("MapperId"), map);
+    public List<DataMap> findByAttribute(DataMap map) throws Exception {
+        verification("Base-mapper.selectByAttribute",map);
+        return getSqlSession().selectList(map.getStr("MapperId"), map);
     }
 
     @Override
-    public Integer update(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.updateByid", map);
-        return getSqlSession().update(map.getStr("MapperId"), map);
-    }
-
-    @Override
-    public Integer insert(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.addEntity", map);
+    public int insert(DataMap map) throws Exception {
+        verification("Base-mapper.addEntity",map);
         return getSqlSession().insert(map.getStr("MapperId"), map);
     }
 
     @Override
-    public List<DataMap> selectListqueryPage(DataMap map) throws Exception {
-        map = builSqlData("Base-mapper.QueryBypage", map);
-        return getSqlSession().selectList(map.getStr("MapperId"), map);
+    public int deleteById(DataMap map) throws Exception {
+        verification("Base-mapper.deleteByIds",map);
+        return getSqlSession().delete(map.getStr("MapperId"), map);
+    }
+
+    @Override
+    public int deleteByAttribute(DataMap map) throws Exception {
+        verification("Base-mapper.deleteByAttribute",map);
+        return getSqlSession().delete(map.getStr("MapperId"), map);
+    }
+
+    @Override
+    public int update(DataMap map) throws Exception {
+        verification("Base-mapper.updateByid",map);
+        return getSqlSession().update(map.getStr("MapperId"), map);
     }
 
     /**
-     * 构建sql方法
+     * 检验关键key 是否存在
      */
-
-    private DataMap builSqlData(String mapperStr, DataMap map) throws Exception {
+    private void verification(String mapperStr, DataMap map) throws Exception {
 
         //判断 map中是否 传入MapperId  如无则使用 mapperStr
         if (!map.containsKey("MapperId")) {
@@ -87,8 +91,5 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
         if (map.containsKey("tableName")) {
             throw new BusinessException("获取不到表名，查询失败！");
         }
-        return map;
     }
-
-
 }
