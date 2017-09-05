@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- ===================================== 数据源和事务管理 ===================================== -->
+	<bean
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config/jdbc/jdbc.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		  init-method="init" destroy-method="close">
+		<property name="url" value="${atm.url}" />
+		<property name="driverClassName" value="${atm.driver}" />
+		<property name="username" value="${atm.username}" />
+		<property name="password" value="${atm.password}" />
+		<property name="maxWait" value="5000" />
+		<property name="defaultAutoCommit" value="true" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="300000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x' FROM DUAL" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<property name="poolPreparedStatements" value="false" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+				  value="20" />
+
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="1200" />
+		<property name="logAbandoned" value="true" />
+	</bean>
+
+	<bean id="defaultTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="defaultTransactionManager" proxy-target-class="true" />
+
+	<!-- 定义事务通知. -->
+	<!-- 	<tx:advice id="txAdvice" transaction-manager="defaultTransactionManager">
+            <tx:attributes>
+                <tx:method name="select*" propagation="REQUIRED" read-only="true" />
+                <tx:method name="*" propagation="REQUIRED"/>
+            </tx:attributes>
+        </tx:advice> -->
+
+	<!-- 定义事务通知的切入点. -->
+	<!-- 	<aop:config>
+            <aop:advisor advice-ref="txAdvice"
+                pointcut="execution(* org.gdie.jczbg.service.impl.*Impl.*(..))" />
+            <aop:advisor advice-ref="txAdvice"
+                pointcut="execution(* com.gdie.workflow.service.impl.*Impl.*(..))" />
+        </aop:config> -->
+
+</beans>
