@@ -18,41 +18,6 @@
 	<!-- 自动扫描包 ,将带有注解的类 纳入spring容器管理 -->
 	<context:component-scan base-package="com.smpl.*"/>
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:config/jdbc.properties</value>
-			</list>
-		</property>
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-	</bean>
-	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
-		init-method="init" destroy-method="close">
-		<property name="url" value="${atm.url}" />
-		<property name="driverClassName" value="${atm.driver}" />
-		<property name="username" value="${atm.username}" />
-		<property name="password" value="${atm.password}" />
-		<property name="maxWait" value="5000" />
-		<property name="defaultAutoCommit" value="true" />
-
-		<property name="timeBetweenEvictionRunsMillis" value="300000" />
-		<property name="minEvictableIdleTimeMillis" value="300000" />
-
-		<property name="validationQuery" value="SELECT 'x' FROM DUAL" />
-		<property name="testWhileIdle" value="true" />
-		<property name="testOnBorrow" value="false" />
-		<property name="testOnReturn" value="false" />
-
-		<property name="poolPreparedStatements" value="false" />
-		<property name="maxPoolPreparedStatementPerConnectionSize"
-				  value="20" />
-
-		<property name="removeAbandoned" value="true" />
-		<property name="removeAbandonedTimeout" value="1200" />
-		<property name="logAbandoned" value="true" />
-	</bean>
-
 
 
  <!--mysql分页工具-->
@@ -104,7 +69,7 @@
 			<tx:method name="*"/>
 		</tx:attributes>
 	</tx:advice>
-	
+
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="*.smpl"/>
@@ -125,7 +90,17 @@
 
 	<!-- 启用对事务注解的支持 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<import resource="jdbc/application.xml" />
 
+	 开发环境配置文件
+	<!--<beans profile="development">-->
+		<!--<context:property-placeholder location="classpath:development-production.properties"/>-->
+	<!--</beans>-->
+
+	<!--&lt;!&ndash; 生产环境配置文件 &ndash;&gt;-->
+	<!--<beans profile="production">-->
+		<!--<context:property-placeholder location="classpath:settings-production.properties"/>-->
+	<!--</beans>-->
 
 	<context:annotation-config />
 </beans>
