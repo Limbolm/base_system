@@ -36,7 +36,7 @@
     </update>
 
 
-    <insert id="addEntity" parameterType="java.util.HashMap">
+    <insert id="addEntity" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO table （key）VALUES (value)
     </insert>
 

@@ -6,6 +6,7 @@ import com.smpl.base.entity.DataMap;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 
@@ -15,7 +16,7 @@ import java.util.List;
  * BaseMapper 实现类
  */
 
-@Service(value = "baseMapper")
+@Repository("baseMapper")
 public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
 
     //使用sqlSessionFactory
@@ -74,6 +75,11 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
     public int update(DataMap map) throws Exception {
         verification("Base-mapper.updateByid",map);
         return getSqlSession().update(map.getStr("MapperId"), map);
+    }
+
+    @Override
+    public DataMap queryTableColum(DataMap map) throws Exception {
+        return getSqlSession().selectOne("Base-mapper.queryTableColum",map);
     }
 
     /**
