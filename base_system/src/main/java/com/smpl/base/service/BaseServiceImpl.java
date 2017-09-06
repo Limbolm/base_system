@@ -1,11 +1,15 @@
 package com.smpl.base.service;
 
+import com.smpl.base.annotations.TableSeg;
 import com.smpl.base.entity.DataMap;
+import com.smpl.base.entity.PageInfo;
 import com.smpl.base.mapper.BaseMapper;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 /**
  *   基础业务类 所有类都继承该类 对dao层进行操作
@@ -44,7 +48,8 @@ public class BaseServiceImpl implements BaseService{
 
     @Override
     public List<DataMap> findByList(DataMap map) throws Exception {
-        return null;
+        validate(map);
+        return baseMapper.findByList(map);
     }
 
     @Override
@@ -90,5 +95,31 @@ public class BaseServiceImpl implements BaseService{
     @Override
     public DataMap queryTableColum(DataMap map) throws Exception {
         return null;
+    }
+
+    /**
+     * 数据校验
+     * @param map
+     * @param str
+     * @param <T>
+     * @return
+     */
+    private <T> Object validate(T map){
+        if (map instanceof Map){
+           forDataMap(map).get("");
+
+        }else{
+
+        }
+          return null;
+    }
+    private Map<String, Object> forDataMap(Object formMap){
+        return (Map<String, Object>)formMap;
+    }
+
+    public static void main(String[] args) {
+        PageInfo pageInfo= new PageInfo();
+        TableSeg tableSeg= pageInfo.getClass().getAnnotation(TableSeg.class);
+        System.out.printf( tableSeg.tableName());
     }
 }
