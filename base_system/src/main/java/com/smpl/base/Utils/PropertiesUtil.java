@@ -17,15 +17,22 @@ public final class PropertiesUtil {
 
     /**
      * 构造方法 再新建 类时 同时读取文件
-     * @param fileName
+     * @param filePath
      */
     public PropertiesUtil(String filePath) {
         readProperties(filePath);
     }
 
     /**
+     * 无参构造器
+     */
+    public PropertiesUtil() {
+       super();
+    }
+
+    /**
      * 解析文件
-     * @param fileName
+     * @param filePath
      */
     private void readProperties(String filePath){
         properties=new Properties();
@@ -62,6 +69,13 @@ public final class PropertiesUtil {
             map.put(key,value);
         }
         return map;
+    }
+
+
+    public String getBaseDataName(){
+        this.readProperties("jdbc.properties");
+        return getValue("system_database");
+
     }
 
     /**
