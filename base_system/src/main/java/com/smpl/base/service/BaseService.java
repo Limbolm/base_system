@@ -29,14 +29,14 @@ import java.util.List;
 //  本模块已经经过开光处理，绝无可能再产生bug
 // =============================================
  */
-public interface BaseService {
+public interface BaseService <T>{
 
     /**
      *查询
      * @param map
      * @return
      */
-    List<DataMap> findByList(DataMap map)throws Exception;
+    List<T> findByList(T map)throws Exception;
 
     /**
      * 根据Id查询
@@ -44,7 +44,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    DataMap findById(DataMap map)throws Exception;
+    T findById(T map)throws Exception;
 
     /**
      *  根据条件查询
@@ -52,7 +52,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    List<DataMap> findByAttribute(DataMap map)throws Exception;
+    List<T> findByAttribute(T map)throws Exception;
 
     /**
      *  新增
@@ -60,7 +60,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    int insert(DataMap map)throws Exception;
+    int insert(T map)throws Exception;
 
     /**
      * 批量新增
@@ -68,7 +68,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    int bacthInsert(List<DataMap> maps)throws Exception;
+    int bacthInsert(List<T> maps)throws Exception;
 
     /**
      * 根据id删除
@@ -76,7 +76,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    int deleteById(DataMap map)throws Exception;
+    int deleteById(T map)throws Exception;
 
     /**
      * 根据条件删除
@@ -84,7 +84,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    int deleteByAttribute(DataMap map)throws Exception;
+    int deleteByAttribute(T map)throws Exception;
 
     /**
      *  更新
@@ -92,7 +92,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    int update(DataMap map)throws Exception;
+    int update(T map)throws Exception;
 
     /**
      * 批量更新
@@ -100,7 +100,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    int bacthUpdate(List<DataMap> maps)throws Exception;
+    int bacthUpdate(List<T> maps)throws Exception;
 
     /**
      * 根据数据库名及表名查询表的字段
@@ -108,7 +108,7 @@ public interface BaseService {
      * @return
      * @throws Exception
      */
-    DataMap queryTableColum(DataMap map) throws Exception;
+    DataMap queryTableColum(T map) throws Exception;
 
 
 }

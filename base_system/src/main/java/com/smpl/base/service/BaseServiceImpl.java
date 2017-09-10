@@ -1,5 +1,7 @@
 package com.smpl.base.service;
 
+import com.smpl.base.Exception.BusinessException;
+import com.smpl.base.Utils.PropertiesUtil;
 import com.smpl.base.annotations.TableSeg;
 import com.smpl.base.entity.DataMap;
 import com.smpl.base.entity.PageInfo;
@@ -47,74 +49,105 @@ public class BaseServiceImpl implements BaseService{
 
 
     @Override
-    public List<DataMap> findByList(DataMap map) throws Exception {
-        validate(map);
-        return baseMapper.findByList(map);
+    public List findByList(Object map) throws Exception {
+        DataMap forMap=validate("Base-mapper.selectByAttribute",map);
+        return baseMapper.findByList(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public DataMap findById(DataMap map) throws Exception {
-        return null;
+    public Object findById(Object map) throws Exception {
+        DataMap forMap=validate("Base-mapper.selectById",map);
+        return baseMapper.findById(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public List<DataMap> findByAttribute(DataMap map) throws Exception {
-        return null;
+    public List findByAttribute(Object map) throws Exception {
+        DataMap forMap=validate("Base-mapper.selectByAttribute",map);
+        return baseMapper.findByAttribute(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public int insert(DataMap map) throws Exception {
-        return 0;
+    public int insert(Object map) throws Exception {
+        DataMap forMap=validate( "Base-mapper.addEntity",map);
+        return baseMapper.insert(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public int bacthInsert(List<DataMap> maps) throws Exception {
-        return 0;
+    public int bacthInsert(List maps) throws Exception {
+        int i=0;
+        for (Object map:maps) {
+            DataMap forMap=validate( "Base-mapper.addEntity",map);
+            baseMapper.insert(forMap.getStr("MapperId"),forMap);
+            i++;
+        }
+        return i;
     }
 
     @Override
-    public int deleteById(DataMap map) throws Exception {
-        return 0;
+    public int deleteById(Object map) throws Exception {
+        DataMap forMap=validate("Base-mapper.deleteByIds",map);
+        return  baseMapper.deleteById(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public int deleteByAttribute(DataMap map) throws Exception {
-        return 0;
+    public int deleteByAttribute(Object map) throws Exception {
+        DataMap forMap=validate("Base-mapper.deleteByAttribute",map);
+        return baseMapper.deleteByAttribute(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public int update(DataMap map) throws Exception {
-        return 0;
+    public int update(Object map) throws Exception {
+        DataMap forMap=validate("Base-mapper.updateByid",map);
+        return baseMapper.update(forMap.getStr("MapperId"),forMap);
     }
 
     @Override
-    public int bacthUpdate(List<DataMap> maps) throws Exception {
-        return 0;
+    public int bacthUpdate(List maps) throws Exception {
+        int i=0;
+        for (Object map:maps) {
+            DataMap forMap=validate( "Base-mapper.updateByid",map);
+            baseMapper.update(forMap.getStr("MapperId"),forMap);
+            i++;
+        }
+        return i;
     }
 
     @Override
-    public DataMap queryTableColum(DataMap map) throws Exception {
-        return null;
+    public DataMap queryTableColum(Object map) throws Exception {
+        PropertiesUtil pro=new PropertiesUtil();
+        String database_name=pro.getBaseDataName();
+        DataMap forMap=validate("Base-mapper.updateByid",map);
+        forMap.put("database_name",database_name);
+        return baseMapper.queryTableColum(forMap);
     }
+
 
     /**
-     * 数据校验
+     * 数据校验 与封装
      * @param map
-     * @param str
-     * @param <T>
+     * @param mapperStr
      * @return
      */
-    private <T> Object validate(T map){
+    private DataMap validate(String mapperStr,Object map){
         if (map instanceof Map){
-           forDataMap(map).get("");
-
+            DataMap framsMap=forDataMap(map);
+            if (!framsMap.containsKey("MapperId")) {
+                forDataMap(map).put("MapperId", mapperStr);
+            }
+            if (framsMap.containsKey("tableName")) {
+                throw new BusinessException("获取不到表名，查询失败！");
+            }
+            return framsMap;
         }else{
 
+
+            return null;
+
         }
-          return null;
+
     }
-    private Map<String, Object> forDataMap(Object formMap){
-        return (Map<String, Object>)formMap;
+    private DataMap forDataMap(Object formMap){
+        return (DataMap)formMap;
     }
 
     public static void main(String[] args) {
@@ -122,4 +155,6 @@ public class BaseServiceImpl implements BaseService{
         TableSeg tableSeg= pageInfo.getClass().getAnnotation(TableSeg.class);
         System.out.printf( tableSeg.tableName());
     }
+
+
 }

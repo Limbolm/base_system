@@ -16,14 +16,14 @@ import java.util.List;
  * 7.deleteByAttribute 根绝条件删除
  * 8.update 更新
  */
-public interface BaseMapper {
+public interface BaseMapper<T> {
     /**
      * findByPage 分页查询
      * @param map
      * @return
      * @throws Exception
      */
-    List<DataMap> findByPage(DataMap map)throws Exception;
+    List<T> findByPage(String mapperStr,T map)throws Exception;
 
     /**
      * 根据id 查询
@@ -31,7 +31,7 @@ public interface BaseMapper {
      * @return
      * @throws Exception
      */
-    DataMap findById(DataMap map)throws Exception;
+    T findById(String mapperStr,T map)throws Exception;
 
     /**
      *  不分页查询
@@ -39,7 +39,7 @@ public interface BaseMapper {
      * @return
      * @throws Exception
      */
-    List<DataMap> findByList(DataMap map)throws Exception;
+    List<T> findByList(String mapperStr,T map)throws Exception;
 
     /**
      * 根绝条件查询
@@ -47,7 +47,7 @@ public interface BaseMapper {
      * @return
      * @throws Exception
      */
-    List<DataMap> findByAttribute(DataMap map)throws Exception;
+    List<T> findByAttribute(String mapperStr,T map)throws Exception;
 
     /**
      * 新增
@@ -55,7 +55,7 @@ public interface BaseMapper {
      * @return
      * @throws Exception
      */
-    int insert(DataMap map)throws Exception;
+    int insert(String mapperStr,T map)throws Exception;
 
     /**
      * 根据id 删除
@@ -63,7 +63,7 @@ public interface BaseMapper {
      * @return
      * @throws Exception
      */
-    int deleteById(DataMap map)throws Exception;
+    int deleteById(String mapperStr,T map)throws Exception;
 
     /**
      * 根据条件 尽心删除
@@ -71,7 +71,7 @@ public interface BaseMapper {
      * @return 返回删除 数目
      * @throws Exception
      */
-    int deleteByAttribute(DataMap map)throws Exception;
+    int deleteByAttribute(String mapperStr,T map)throws Exception;
 
     /**
      * 更新
@@ -79,7 +79,7 @@ public interface BaseMapper {
      * @return
      * @throws Exception
      */
-    int update(DataMap map)throws Exception;
+    int update(String mapperStr,T map)throws Exception;
 
     /**
      *
