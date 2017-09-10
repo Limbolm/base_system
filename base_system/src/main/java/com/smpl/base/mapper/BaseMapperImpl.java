@@ -4,6 +4,7 @@ import com.smpl.base.Exception.BusinessException;
 import com.smpl.base.Utils.StringUtils;
 import com.smpl.base.entity.DataMap;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.poi.ss.formula.functions.T;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * BaseMapper 实现类
@@ -30,51 +32,43 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
 
 
     @Override
-    public List<DataMap> findByPage(DataMap map) throws Exception {
-        verification("Base-mapper.selectQueryPage",map);
-        return getSqlSession().selectList(map.getStr("MapperId"), map);
+    public List findByPage(String mapperStr,Object map) throws Exception {
+        return getSqlSession().selectList(mapperStr, map);
     }
 
     @Override
-    public DataMap findById(DataMap map) throws Exception {
-        verification("Base-mapper.selectById",map);
-        return getSqlSession().selectOne(map.getStr("MapperId"), map);
+    public Object findById(String mapperStr,Object map) throws Exception {
+        return getSqlSession().selectOne(mapperStr, map);
     }
 
     @Override
-    public List<DataMap> findByList(DataMap map) throws Exception {
-        verification("Base-mapper.selectByAttribute",map);
-        return getSqlSession().selectList(map.getStr("MapperId"), map);
+    public List<Object> findByList(String mapperStr,Object map) throws Exception {
+        return getSqlSession().selectList(mapperStr, map);
     }
 
     @Override
-    public List<DataMap> findByAttribute(DataMap map) throws Exception {
-        verification("Base-mapper.selectByAttribute",map);
-        return getSqlSession().selectList(map.getStr("MapperId"), map);
+    public List<Object> findByAttribute(String mapperStr,Object map) throws Exception {
+        return getSqlSession().selectList(mapperStr, map);
     }
 
     @Override
-    public int insert(DataMap map) throws Exception {
-        verification("Base-mapper.addEntity",map);
-        return getSqlSession().insert(map.getStr("MapperId"), map);
+    public int insert(String mapperStr,Object map) throws Exception {;
+        return getSqlSession().insert(mapperStr, map);
     }
 
     @Override
-    public int deleteById(DataMap map) throws Exception {
-        verification("Base-mapper.deleteByIds",map);
-        return getSqlSession().delete(map.getStr("MapperId"), map);
+    public int deleteById(String mapperStr,Object map) throws Exception {
+        return getSqlSession().delete(mapperStr, map);
     }
 
     @Override
-    public int deleteByAttribute(DataMap map) throws Exception {
-        verification("Base-mapper.deleteByAttribute",map);
-        return getSqlSession().delete(map.getStr("MapperId"), map);
+    public int deleteByAttribute(String mapperStr,Object map) throws Exception {
+        return getSqlSession().delete(mapperStr, map);
     }
 
     @Override
-    public int update(DataMap map) throws Exception {
-        verification("Base-mapper.updateByid",map);
-        return getSqlSession().update(map.getStr("MapperId"), map);
+    public int update(String mapperStr,Object map) throws Exception {
+        return getSqlSession().update(mapperStr, map);
     }
 
     @Override
@@ -82,20 +76,4 @@ public class BaseMapperImpl extends SqlSessionDaoSupport implements BaseMapper {
         return getSqlSession().selectOne("Base-mapper.queryTableColum",map);
     }
 
-    /**
-     * 检验关键key 是否存在
-     */
-    private void verification(String mapperStr, DataMap map) throws Exception {
-
-        //判断 map中是否 传入MapperId  如无则使用 mapperStr
-        if (!map.containsKey("MapperId")) {
-            map.put("MapperId", mapperStr);
-        } else {
-            map.put("MapperId", map.getMapperId());
-        }
-
-        if (map.containsKey("tableName")) {
-            throw new BusinessException("获取不到表名，查询失败！");
-        }
-    }
 }
