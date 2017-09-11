@@ -101,9 +101,6 @@ public class PageInterceptor implements Interceptor {
             //修改sql
             return this.preparedSQL(invocation, metaStatementHandler, boundSql, pageNum, pageSize, dbType);
 
-
-
-
         }
 
 
@@ -252,8 +249,19 @@ public class PageInterceptor implements Interceptor {
             } else if (!map.containsKey("ids") && map.containsKey("id")) {
                 sql = "DELETE from " + tableName + " where  id in (" + map.get("id") + ")";
             }else if (mappedStatement.getId().indexOf("deleteByAttribute")>-1){
-                //TODO:后期添加 更具字段删除
-
+              StringBuffer delSql=new StringBuffer("DELETE from "+tableName+" where ");
+              StringBuffer coumSql=new StringBuffer();
+                String[] cloumNames = cloumNameOfString.split(",");
+                for (String cloumName:cloumNames){
+                    Object o=map.get(cloumName);
+                    if(o!=null){
+                        coumSql.append(" "+cloumName+" = ?");
+                        Builder mappring=new ParameterMapping.Builder(configuration,cloumName,o.getClass());
+                        ParameterMapping param = mappring.build();
+                        paraList.add(param);
+                    }
+                }
+                sql=delSql.toString()+coumSql.toString();
             }
         } else if ("SELECT".equals(mappedStatement.getSqlCommandType().name())) {
             //根据 mappedStatement.id 判断查询方式  findByID  findbyname findByatuibe 以上方法默认不需分页
