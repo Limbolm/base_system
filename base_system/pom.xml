@@ -24,6 +24,19 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springside</groupId>
+      <artifactId>springside-core</artifactId>
+      <version>4.2.1.GA</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springside</groupId>
+      <artifactId>springside-core</artifactId>
+      <version>4.2.1.GA</version>
+      <classifier>tests</classifier>
+    </dependency>
+
+    <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.6</version>
@@ -71,6 +84,12 @@
       <groupId>com.alibaba</groupId>
       <artifactId>druid</artifactId>
       <version>1.0.15</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.14</version>
     </dependency>
 
     <!-- ehcache -->
@@ -271,6 +290,16 @@
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.sisu</groupId>
+      <artifactId>sisu-inject-bean</artifactId>
+      <version>1.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>3.0</version>
     </dependency>
 
   </dependencies>

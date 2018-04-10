@@ -11,39 +11,41 @@
     </select>
     
     <select id="selectByAttribute"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
-        SELECT * FROM #{tableName} WHERE  1=1
+        SELECT * FROM ${tableName} WHERE  1=1
         <if test="attributeValue!=null and attributeValue!=''">
             AND ${attributeKey} = ${attributeValue}
         </if>
+    </select>
+
+    <select id="selectQueryPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT * FROM ${tableName} WHERE  1=1
     </select>
 
     <delete id="deleteByIds" parameterType="java.util.HashMap" >
         DELETE FROM ${tableName} WHERE  1=1 id IN (${ids})
     </delete>
 
+    <delete id="deleteByAttribute" parameterType="java.util.HashMap" >
+        DELETE FROM ${tableName} WHERE  1=1 id IN (${ids})
+    </delete>
+
     <update id="updateByid" parameterType="java.util.HashMap">
-        UPDATE FROM ${tableName}
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
-            #{key}
-        </foreach>
-        VALUES
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
-            #{value}
-        </foreach>
+        UPDATE FROM table （key）VALUES (value)
         WHERE 1=1
         AND id =${id}
     </update>
 
 
-    <insert id="addEntity" parameterType="java.util.HashMap">
-        INSERT FROM ${tableName}
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
-            #{key}
-        </foreach>
-        VALUES
-        <foreach item="value" index="key" collection="map.entrySet()" open="(" separator="),(" close=")">
-            #{value}
-        </foreach>
+    <insert id="addEntity" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO table （key）VALUES (value)
     </insert>
+
+
+    <!--根据表明获取表的所有字段-->
+    <select id="queryTableColum" resultType="java.util.HashMap">
+        select TABLE_NAME,group_concat(COLUMN_NAME) COLUMN_NAME
+        from information_schema.columns
+        where table_name in (${table_name}) and table_schema in (${database_name})  GROUP BY TABLE_NAME
+    </select>
 
 </mapper>
